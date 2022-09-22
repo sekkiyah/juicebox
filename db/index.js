@@ -23,7 +23,7 @@ async function getUserById(userId) {
       rows: [user],
     } = await client.query(`
         SELECT id, username, name, location, active FROM users
-        WHERE "authorId"=${userId};
+        WHERE "id"=${userId};
       `);
     const posts = await getPostsByUser(userId);
 
@@ -35,16 +35,6 @@ async function getUserById(userId) {
   } catch (error) {
     throw error;
   }
-  // first get the user (NOTE: Remember the query returns
-  // (1) an object that contains
-  // (2) a `rows` array that (in this case) will contain
-  // (3) one object, which is our user.
-  // if it doesn't exist (if there are no `rows` or `rows.length`), return null
-  // if it does:
-  // delete the 'password' key from the returned object
-  // get their posts (use getPostsByUser)
-  // then add the posts to the user object with key 'posts'
-  // return the user object
 }
 
 async function createUser({ username, password, name, location }) {
@@ -96,7 +86,7 @@ async function updateUser(id, fields = {}) {
 
 async function getAllPosts() {
   const { rows } = await client.query(`
-    SELECT id, authorId, title, content
+    SELECT id, "authorId", title, content
     FROM posts;
   `);
 
@@ -122,9 +112,8 @@ async function createPost({ authorId, title, content }) {
       rows: [post],
     } = await client.query(
       `
-      INSERT INTO posts(authorId, title, content)
+      INSERT INTO posts("authorId", title, content)
       VALUES ($1, $2, $3)
-      ON CONFLICT (authorId) DO NOTHING
       RETURNING *;`,
       [authorId, title, content]
     );
@@ -135,8 +124,8 @@ async function createPost({ authorId, title, content }) {
   }
 }
 
-async function updatePost(id, { title, content, active }) {
-  const setString = Object.keys(title, content, active)
+async function updatePost(id, fields = { title, content, active }) {
+  const setString = Object.keys(fields)
     .map((key, index) => `"${key}"=$${index + 1}`)
     .join(', ');
 
@@ -170,7 +159,6 @@ module.exports = {
   createUser,
   updateUser,
   getAllPosts,
-  getPostsByUser,
   createPost,
   updatePost,
 };
