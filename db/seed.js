@@ -108,6 +108,7 @@ async function createInitialPosts() {
       title: 'First Post',
       content:
         'This is my first post. I hope I love writing blogs as much as I love writing them.',
+      tags: ['#happy', '#youcandoanything'],
     });
 
     await createPost({
@@ -115,39 +116,17 @@ async function createInitialPosts() {
       title: 'New KBBQ restaurant',
       content:
         'I went to a new restaurant down the road on Wednesday. It was really tasty!',
+      tags: ['#happy', '#worst-day-ever'],
     });
 
     await createPost({
       authorId: sandra.id,
       title: 'My neighbor is the best',
       content: 'Jennifer makes really great cookies. You have to try them out!',
+      tags: ['#happy', '#youcandoanything', '#canmandoeverything'],
     });
     console.log('Finished creating posts!');
   } catch (error) {
-    throw error;
-  }
-}
-
-async function createInitialTags() {
-  try {
-    console.log('Starting to create tags...');
-
-    const [happy, sad, inspo, catman] = await createTags([
-      '#happy',
-      '#worst-day-ever',
-      '#youcandoanything',
-      '#catmandoeverything',
-    ]);
-
-    const [postOne, postTwo, postThree] = await getAllPosts();
-
-    await addTagsToPost(postOne.id, [happy, inspo]);
-    await addTagsToPost(postTwo.id, [sad, inspo]);
-    await addTagsToPost(postThree.id, [happy, catman, inspo]);
-
-    console.log('Finished creating tags!');
-  } catch (error) {
-    console.log('Error creating tags!');
     throw error;
   }
 }
@@ -160,7 +139,6 @@ async function rebuildDB() {
 
     await createInitialUsers();
     await createInitialPosts();
-    await createInitialTags();
   } catch (error) {
     console.log('Error during rebuildDB');
     console.error(error);
