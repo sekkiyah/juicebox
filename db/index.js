@@ -199,14 +199,11 @@ async function updatePost(postId, fields = {}) {
 
   try {
     if (setString.length > 0) {
-      const {
-        rows: [post],
-      } = await client.query(
+      await client.query(
         `
         UPDATE posts
         SET ${setString}
-        WHERE id=${postId}
-        RETURNING *;`,
+        WHERE id=${postId};`,
         Object.values(fields)
       );
     }
@@ -275,8 +272,7 @@ async function createTags(tagList) {
       `
       INSERT INTO tags(name)
       VALUES (${insertValues})
-      ON CONFLICT (name) DO NOTHING
-      RETURNING *;`,
+      ON CONFLICT (name) DO NOTHING;`,
       tagList
     );
 
