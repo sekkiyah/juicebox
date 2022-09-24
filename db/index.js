@@ -173,6 +173,7 @@ async function createPost({ authorId, title, content, tags = [] }) {
 
 async function updatePost(postId, fields = {}) {
   const { tags } = fields;
+  delete fields.tags;
   const setString = Object.keys(fields)
     .map((key, index) => `"${key}"=$${index + 1}`)
     .join(', ');
@@ -196,11 +197,7 @@ async function updatePost(postId, fields = {}) {
     }
 
     const tagList = await createTags(tags);
-    const tagListIdString = tagList
-      .map((tag) => {
-        `${tag.id}`;
-      })
-      .join(', ');
+    const tagListIdString = tagList.map((tag) => `${tag.id}`).join(', ');
 
     await client.query(
       `
