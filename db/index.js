@@ -151,6 +151,25 @@ async function getPostById(postId) {
   }
 }
 
+async function getPostsByTagName(tagName) {
+  try {
+    const { rows: postIds } = await client.query(
+      `
+      SELECT posts.id
+      FROM posts
+      JOIN post_tags ON posts.id=post_tags."postId"
+      JOIN tags ON tags.id=post_tags."tagId"
+      WHERE tags.name=$1;
+    `,
+      [tagName]
+    );
+
+    return await Promise.all(postIds.map((post) => getPostById(post.id)));
+  } catch (error) {
+    throw error;
+  }
+}
+
 async function createPost({ authorId, title, content, tags = [] }) {
   try {
     const {
@@ -224,7 +243,6 @@ async function createPostTag(postId, tagId) {
       VALUES ($1, $2);`,
       [postId, tagId]
     );
-    //ON CONFLICT ("postId", "tagId") DO NOTHING;
   } catch (error) {
     throw error;
   }
@@ -283,6 +301,7 @@ module.exports = {
   createUser,
   updateUser,
   getAllPosts,
+  getPostsByTagName,
   createPost,
   updatePost,
   createTags,
