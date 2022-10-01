@@ -1,13 +1,15 @@
 const { Client } = require('pg');
 require('dotenv').config();
 
-const client = new Client({
-  host: 'localhost',
-  port: 5433,
-  database: 'juicebox-dev',
-  user: 'postgres',
-  password: process.env.PGPASSWORD,
-});
+const client = new Client(
+  process.env.DATABASE_URL || {
+    host: 'localhost',
+    port: 5433,
+    database: 'juicebox-dev',
+    user: 'postgres',
+    password: process.env.PGPASSWORD,
+  }
+);
 
 async function getAllUsers() {
   const { rows } = await client.query(`
