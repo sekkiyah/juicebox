@@ -107,7 +107,7 @@ async function getAllPosts() {
     SELECT id FROM posts;
   `);
 
-  const posts = await Promise.all(postIds.map((post) => getPostById(post.id)));
+  const posts = await Promise.all(postIds.map(post => getPostById(post.id)));
 
   return posts;
 }
@@ -118,9 +118,7 @@ async function getPostsByUser(userId) {
       SELECT id FROM posts
       WHERE "authorId"=${userId};`);
 
-    const posts = await Promise.all(
-      postIds.map((post) => getPostById(post.id))
-    );
+    const posts = await Promise.all(postIds.map(post => getPostById(post.id)));
 
     return posts;
   } catch (error) {
@@ -183,7 +181,7 @@ async function getPostsByTagName(tagName) {
       [tagName]
     );
 
-    return await Promise.all(postIds.map((post) => getPostById(post.id)));
+    return await Promise.all(postIds.map(post => getPostById(post.id)));
   } catch (error) {
     throw error;
   }
@@ -232,7 +230,7 @@ async function updatePost(postId, fields = {}) {
     }
 
     const tagList = await createTags(tags);
-    const tagListIdString = tagList.map((tag) => `${tag.id}`).join(', ');
+    const tagListIdString = tagList.map(tag => `${tag.id}`).join(', ');
 
     await client.query(
       `
@@ -266,7 +264,7 @@ async function createPostTag(postId, tagId) {
 
 async function addTagsToPost(postId, tagList) {
   try {
-    const createPostTagPromises = tagList.map((tag) =>
+    const createPostTagPromises = tagList.map(tag =>
       createPostTag(postId, tag.id)
     );
 
@@ -325,6 +323,7 @@ module.exports = {
   createUser,
   updateUser,
   getAllPosts,
+  getPostById,
   getPostsByTagName,
   createPost,
   updatePost,
